@@ -1,16 +1,9 @@
 import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+dotenv.config();
+
 import connectDB from "./db/index.js";
 import { app } from "./app.js";
-import { seedDatabase } from './seed/seeder.js';
 import { verifySMTP } from './utils/sendOTP.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// Load env configuration from server/.env
-dotenv.config({ path: join(__dirname, '../.env'), override: true });
 
 const PORT = process.env.PORT || 8000;
 
@@ -18,7 +11,6 @@ const PORT = process.env.PORT || 8000;
 connectDB()
   .then(async () => {
     console.log("📡 Connected to MongoDB successfully.");
-    await seedDatabase();
     await verifySMTP();
     app.listen(PORT, () => {
       console.log(`🚀 StreamVault Backend Server running on http://localhost:${PORT}`);
