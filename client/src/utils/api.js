@@ -1,3 +1,8 @@
+// IMPORTANT: In production (Vercel), set VITE_API_URL in the Vercel dashboard
+// (Project Settings → Environment Variables) to your backend's full URL.
+// Example: VITE_API_URL = https://your-backend.vercel.app/api
+// Without this, production builds fall back to relative '/api' which only works
+// if the frontend and backend are on the same Vercel deployment/domain.
 const BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:8000/api');
 
 async function request(endpoint, options = {}) {
