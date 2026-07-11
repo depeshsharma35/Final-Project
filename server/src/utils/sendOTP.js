@@ -1,18 +1,8 @@
 import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Ensure environment variables are loaded regardless of execution working directory
-dotenv.config({ path: path.resolve(__dirname, '../../.env'), override: true });
-dotenv.config({ path: path.resolve(__dirname, '../.env'), override: true });
-dotenv.config({ override: true });
 
 /**
- * Helper to get or create the Gmail SMTP transporter
+ * Helper to get or create the Gmail SMTP transporter.
+ * Credentials are loaded once by dotenv in server/src/index.js at startup.
  */
 function getTransporter() {
   const cleanPass = process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s+/g, '') : '';
@@ -26,8 +16,8 @@ function getTransporter() {
 }
 
 /**
- * Requirement 9: Verify that the SMTP configuration works before sending emails.
- * Can also be called at server startup to check SMTP connectivity.
+ * Verify that the SMTP configuration works before sending emails.
+ * Called at server startup to check SMTP connectivity.
  * @returns {Promise<boolean>} True if SMTP connection and authentication succeed, false otherwise
  */
 export async function verifySMTP() {
@@ -49,7 +39,9 @@ export async function verifySMTP() {
 }
 
 /**
- * Reusable utility to send an OTP verification email to the user
+ * Send an OTP verification email to the user.
+ * Throws an error if SMTP credentials are missing or if sending fails —
+ * the caller (auth route) must catch this and return an appropriate HTTP error.
  * @param {string} toEmail - Recipient email address
  * @param {string} otpCode - 6-digit OTP code
  * @param {string} [userName='User'] - Recipient name for greeting
@@ -61,9 +53,6 @@ export async function sendOTP(toEmail, otpCode, userName = 'User') {
   }
 
   const transporter = getTransporter();
-
-  // Requirement 9: Verify that the SMTP configuration works before sending emails
-  await transporter.verify();
 
   const mailOptions = {
     from: `"StreamVault Security" <${process.env.EMAIL_USER}>`,

@@ -1,23 +1,25 @@
 import mongoose from "mongoose";
+import dns from "dns";
 import { DB_NAME } from "../constants.js";
 
-const connectDB = async () => {
-  try {
-    const rawUri = process.env.MONGODB_URI || process.env.MONGO_URI;
-    if (!rawUri) {
-      throw new Error("MongoDB connection URI is missing from environment variables.");
-    }
-    
-    // Safely append DB_NAME avoiding double slashes
-    const baseUri = rawUri.endsWith("/") ? rawUri.slice(0, -1) : rawUri;
-    const connectionString = DB_NAME ? `${baseUri}/${DB_NAME}` : baseUri;
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
-    const connectionInstance = await mongoose.connect(connectionString);
+const MONGODB_OPTIONS = {
+  serverSelectionTimeoutMS: 15000,
+  socketTimeoutMS: 45000,
+  family: 4,
+};
+
+const connectDB = async () => {
+  const uri = `${process.env.MONGODB_URI}/${DB_NAME}`;
+  try {
+    console.log(`🔌 Connecting to MongoDB Atlas...`);
+    const connectionInstance = await mongoose.connect(uri, MONGODB_OPTIONS);
     console.log(
       `📡 MongoDB connected! DB HOST: ${connectionInstance.connection.host}`,
     );
   } catch (error) {
-    console.error("❌ MongoDB connection FAILED: ", error);
+    console.error("❌ MongoDB connection FAILED: ", error.message);
     throw error;
   }
 };
