@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://final-project-b.vercel.app/api/$1"
+      "destination": "https://final-project-server.vercel.app/api/$1"
     },
     {
       "source": "/(.*)",

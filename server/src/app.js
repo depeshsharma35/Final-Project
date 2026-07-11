@@ -7,8 +7,29 @@ import dataRoutes from './routes/data.js';
 const app = express();
 
 // ── CORS Configuration ──
+// Allowed origins: explicit CLIENT_URL env var, all *.vercel.app deployments, and localhost dev
+const ALLOWED_ORIGINS = [
+  process.env.CLIENT_URL,          // Explicit production frontend URL (set in Vercel dashboard)
+  'http://localhost:5173',          // Vite dev server
+  'http://localhost:3000',          // CRA dev server (fallback)
+].filter(Boolean);
+
+function isAllowedOrigin(origin) {
+  if (!origin) return true;                               // Allow non-browser requests (curl, Postman)
+  if (ALLOWED_ORIGINS.includes(origin)) return true;     // Exact match
+  if (/^https:\/\/[\w-]+\.vercel\.app$/.test(origin)) return true; // Any *.vercel.app domain
+  return false;
+}
+
 const corsOptions = {
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    if (isAllowedOrigin(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`🚫 CORS blocked origin: ${origin}`);
+      callback(new Error(`CORS: Origin ${origin} is not allowed`));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
