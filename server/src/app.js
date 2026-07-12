@@ -43,7 +43,17 @@ app.use(express.json());
 // Health check endpoints
 app.get(['/api/health', '/health'], (req, res) => {
   const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
-  res.json({ status: 'ok', database: dbStatus, timestamp: new Date().toISOString() });
+  res.json({
+    status: 'ok',
+    database: dbStatus,
+    dbError: global.lastDbError || null,
+    timestamp: new Date().toISOString(),
+    env: {
+      hasMongoUri: !!process.env.MONGODB_URI,
+      nodeEnv: process.env.NODE_ENV,
+      clientUrl: process.env.CLIENT_URL || null
+    }
+  });
 });
 
 // Mount routes with and without /api prefix (for maximum flexibility across Vercel deployments)

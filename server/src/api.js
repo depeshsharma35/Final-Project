@@ -34,7 +34,14 @@ async function connectDB() {
       family: 4,
     });
   }
-  await connectionPromise;
+  try {
+    await connectionPromise;
+    global.lastDbError = null;
+  } catch (err) {
+    connectionPromise = null; // Reset promise so next invocation can retry
+    global.lastDbError = err.message;
+    throw err;
+  }
 }
 
 // Wrap app to ensure DB is connected before handling each request
