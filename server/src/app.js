@@ -40,14 +40,17 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
+// Health check endpoints
+app.get(['/api/health', '/health'], (req, res) => {
   const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
   res.json({ status: 'ok', database: dbStatus, timestamp: new Date().toISOString() });
 });
 
-// Mount routes
+// Mount routes with and without /api prefix (for maximum flexibility across Vercel deployments)
 app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
+
 app.use('/api', dataRoutes);
+app.use('/', dataRoutes);
 
 export { app };

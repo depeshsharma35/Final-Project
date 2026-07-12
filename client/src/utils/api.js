@@ -3,7 +3,16 @@
 // Example: VITE_API_URL = https://your-backend.vercel.app/api
 // Without this, production builds fall back to relative '/api' which only works
 // if the frontend and backend are on the same Vercel deployment/domain.
-const BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:8000/api');
+function getBaseUrl() {
+  let url = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:8000/api');
+  url = url.replace(/\/+$/, ''); // remove trailing slash(es)
+  if (url && url !== '/api' && !url.endsWith('/api')) {
+    url += '/api';
+  }
+  return url;
+}
+
+const BASE_URL = getBaseUrl();
 
 async function request(endpoint, options = {}) {
   try {
