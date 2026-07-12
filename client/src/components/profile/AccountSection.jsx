@@ -121,7 +121,6 @@ export default function AccountSection() {
                 className={inputCls}
               >
                 <option value="email">Email Notification</option>
-                <option value="sms">SMS Text Message</option>
               </select>
             </div>
 

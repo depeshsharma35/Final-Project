@@ -26,10 +26,6 @@ export default function LoginView() {
     return () => clearInterval(iv);
   }, []);
 
-  const fillDemo = (e, p) => {
-    setMode('signin'); setEmail(e); setPassword(p);
-    showToast('Demo credentials filled', 'info', 2000);
-  };
 
   const onSubmit = (ev) => {
     ev.preventDefault();
@@ -106,19 +102,7 @@ export default function LoginView() {
             {mode === 'signin' ? 'Access your StreamVault account' : 'Create a new StreamVault account'}
           </p>
 
-          {/* Demo pills */}
-          {mode === 'signin' && (
-            <div className="flex gap-2 mb-5 flex-wrap">
-              <button id="demo-btn-1" type="button" onClick={() => fillDemo('demo@nexus.io', 'Demo@2024')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-500 dark:text-zinc-400 hover:border-amber-500 hover:text-amber-500 transition-all duration-200">
-                <i className="fa-solid fa-user-tie text-xs" /> Admin Demo
-              </button>
-              <button id="demo-btn-2" type="button" onClick={() => fillDemo('sarah@nexus.io', 'Sarah@2024')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-500 dark:text-zinc-400 hover:border-amber-500 hover:text-amber-500 transition-all duration-200">
-                <i className="fa-solid fa-user text-xs" /> User Demo
-              </button>
-            </div>
-          )}
+
 
           <form onSubmit={onSubmit} className="flex flex-col gap-4">
             {mode === 'signup' && (
@@ -148,7 +132,7 @@ export default function LoginView() {
                 <div className="flex flex-col gap-2">
                   <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Verify Account Via</span>
                   <div className="flex gap-4">
-                    {[['email', 'Email OTP', 'fa-envelope'], ['sms', 'SMS OTP', 'fa-comment-sms']].map(([v, l, ic]) => (
+                    {[['email', 'Email OTP', 'fa-envelope']].map(([v, l, ic]) => (
                       <label key={v} className="flex items-center gap-2 cursor-pointer text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors">
                         <input type="radio" name="otpMethod" checked={otpMethod === v} onChange={() => setOtpMethod(v)} className="accent-amber-500" />
                         <i className={`fa-solid ${ic} text-xs`} />{l}
@@ -168,7 +152,7 @@ export default function LoginView() {
           <div className="mt-5 p-3.5 rounded-xl bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800/30 flex items-start gap-2.5">
             <i className="fa-solid fa-circle-info text-blue-500 text-sm mt-0.5 shrink-0" />
             <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-              {mode === 'signin' ? 'Secure OTP verification sent to your registered contact.' : 'New account requires email/SMS OTP verification.'}
+              {mode === 'signin' ? 'Secure OTP verification sent to your registered contact.' : 'New account requires email OTP verification.'}
             </p>
           </div>
         </div>
