@@ -15,6 +15,14 @@ async function request(endpoint, options = {}) {
       credentials: 'include',
       ...options
     });
+
+    // Check if the response is valid and is actually JSON (to prevent parsing Vercel HTML 404/500 error pages)
+    const contentType = response.headers.get('content-type') || '';
+    if (!response.ok || !contentType.includes('application/json')) {
+      console.warn(`⚠️ Backend API (${endpoint}) returned ${response.status} (${response.statusText || 'Not Found'}). Using local fallback.`);
+      return null;
+    }
+
     const data = await response.json();
     return data;
   } catch (error) {
